@@ -31,7 +31,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class TokenService
 {
-    //假如做了变动
+
     private static final Logger log = LoggerFactory.getLogger(TokenService.class);
 
     // 令牌自定义标识
