@@ -71,9 +71,11 @@ public class SysLoginService
         Authentication authentication = null;
         try
         {
+            // 封装-hwb
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
             AuthenticationContextHolder.setContext(authenticationToken);
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            // 通过查数据库核对账号密码是否正确 -hwb
             authentication = authenticationManager.authenticate(authenticationToken);
         }
         catch (Exception e)
@@ -93,11 +95,13 @@ public class SysLoginService
         {
             AuthenticationContextHolder.clearContext();
         }
+
+        //通过异步任务 把登录日志写到mysql 存到ry-logininfo表---hwb
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        //把登录日志写到mysql -hwb
+        //修改sys_user的login ip date字段 ---hwb
         recordLoginInfo(loginUser.getUserId());
-        // 生成token
+        // 1. 把loginUsr数据存到redis中  2.生成token
         return tokenService.createToken(loginUser);
     }
 
@@ -169,6 +173,8 @@ public class SysLoginService
 
     /**
      * 记录登录信息
+     * ----------
+     * 这个是更新sys_user表的login IP date字段---hwb
      *
      * @param userId 用户ID
      */

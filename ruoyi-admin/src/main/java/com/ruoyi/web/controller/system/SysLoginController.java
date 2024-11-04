@@ -37,17 +37,22 @@ public class SysLoginController
 
     /**
      * 登录方法
-     * 
+     * ------
+     * 登录就把token返回给前段---hwb
      * @param loginBody 登录信息
      * @return 结果
      */
     @PostMapping("/login")
     public AjaxResult login(@Validated @RequestBody LoginBody loginBody)
     {
-        AjaxResult ajax = AjaxResult.success();
+        //把这一句代码放到token生成之后--hwb
+//        AjaxResult ajax = AjaxResult.success();
+
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
+        //其实这里是不是可以把两行代码合成一行---hwb
+        AjaxResult ajax = AjaxResult.success();
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }

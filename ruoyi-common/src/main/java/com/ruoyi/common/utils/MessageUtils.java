@@ -13,6 +13,7 @@ public class MessageUtils
 {
     /**
      * 根据消息键和参数 获取消息 委托给spring messageSource
+     * ----获取i18n文件夹中的messages.properties的配置值----hwb
      *
      * @param code 消息键
      * @param args 参数

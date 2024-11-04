@@ -68,11 +68,15 @@ public class TokenService
         {
             try
             {
+                System.out.println("请求中存在token");
+                System.out.println("用jwt框架和密钥来解析token字符串 封装成Claims对象");
                 Claims claims = parseToken(token);
-                System.out.println("claims"+claims);
                 // 解析对应的权限以及用户信息
+                System.out.println("从Claims对象获取login_user_key对应的uuid");
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
+                System.out.println("通过Uuid获取对应存在redis中的userkey");
                 String userKey = getTokenKey(uuid);
+                System.out.println("通过userkey去redis读取到对应的数据封装成LoginUser");
                 LoginUser user = redisCache.getCacheObject(userKey);
                 return user;
             }
@@ -80,6 +84,8 @@ public class TokenService
             {
                 log.error("获取用户信息异常'{}'", e.getMessage());
             }
+        }else {
+            System.out.println("判断请求中 没有token 不用去解析token不用去redis找对应信息");
         }
         return null;
     }
@@ -116,13 +122,12 @@ public class TokenService
      */
     public String createToken(LoginUser loginUser)
     {
-
         //这里的token并不是返回给前段的token 而是保存到redis中的索引token-hwb
         String token = IdUtils.fastUUID();
         loginUser.setToken(token);
         //设置用户登录的客户端信息  例如ip-hwb
         setUserAgent(loginUser);
-        //这里的refresh也同时是保存loginUser到redis中的意思--hwb
+        //保存loginUser到redis中。要明确存到redis的并不是返回前端的token token只是一个综合加密后的字符串 不保存到redis里--hwb
         refreshToken(loginUser);
 
         //
@@ -158,6 +163,8 @@ public class TokenService
         loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(loginUser.getToken());
+        System.out.println("存到redis中的keys:"+userKey);
+        //把loginUser的数据存到redis中 这样以后就不用从mysql查询了 redis更快
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
     }
 
@@ -225,10 +232,11 @@ public class TokenService
     private String getToken(HttpServletRequest request)
     {
         String token = request.getHeader(header);
-        System.out.println("从请求头中获取token"+token);
+        System.out.println("从请求头header中获取token为:   "+token);
         if (StringUtils.isNotEmpty(token) && token.startsWith(Constants.TOKEN_PREFIX))
         {
             token = token.replace(Constants.TOKEN_PREFIX, "");
+            System.out.println("如果token是以Bearer 开头:则把token中的Bearer 替换成空白"+token);
         }
         return token;
     }

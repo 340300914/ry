@@ -331,7 +331,8 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 修改用户基本信息
-     * 
+     * ---------------------------------
+     * 修改sys_usr的login ip date字段--hwb
      * @param user 用户信息
      * @return 结果
      */

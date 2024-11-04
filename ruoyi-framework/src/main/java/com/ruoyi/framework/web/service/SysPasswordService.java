@@ -47,18 +47,22 @@ public class SysPasswordService
         String username = usernamePasswordAuthenticationToken.getName();
         String password = usernamePasswordAuthenticationToken.getCredentials().toString();
 
+        //通过用户名去redis获取重试次数
         Integer retryCount = redisCache.getCacheObject(getCacheKey(username));
 
+        //如果重试次数是null 则把次数设置为0
         if (retryCount == null)
         {
             retryCount = 0;
         }
 
+        //如果超过重试上线次数则抛出异常终止流程
         if (retryCount >= Integer.valueOf(maxRetryCount).intValue())
         {
             throw new UserPasswordRetryLimitExceedException(maxRetryCount, lockTime);
         }
 
+        //如果账号密码不匹配 则把不匹配的次数+1 并抛出异常终止流程
         if (!matches(user, password))
         {
             retryCount = retryCount + 1;
@@ -67,6 +71,7 @@ public class SysPasswordService
         }
         else
         {
+            //如果账号密码匹配  则把重试对象从redis删除
             clearLoginRecordCache(username);
         }
     }
