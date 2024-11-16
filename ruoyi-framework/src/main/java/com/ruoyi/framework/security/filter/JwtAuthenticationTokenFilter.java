@@ -32,7 +32,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException
     {
-        System.out.println("进入鉴权 每一个请求夺都会经过这一步 这一步的目的是从request获取tonken 如果有就会从hearder取token-->解密token-->从redis中获取对应的用户信息。保存到上下文 后续filter会读取上下文判断是否认证失败 有上下文认证成功就走成功路径 失败就走失败路径 走到权限认证失败处理类");
+        System.out.println("进入鉴权 每一个请求都会经过这一步 因为这是一个Filter 这一步的目的是从request获取tonken 如果有就会从hearder取token-->解密token-->从redis中获取对应的用户信息。保存到上下文 后续filter会读取上下文判断是否认证失败 有上下文认证成功就走成功路径 失败就走失败路径 走到权限认证失败处理类");
         LoginUser loginUser = tokenService.getLoginUser(request);
         if (StringUtils.isNotNull(loginUser) && StringUtils.isNull(SecurityUtils.getAuthentication()))
         {

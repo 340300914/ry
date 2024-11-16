@@ -182,18 +182,6 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>sle.ftpc</groupId>
-                <artifactId>apps-webservice-ifc</artifactId>
-                <version>10.4.107937-SNAPSHOT</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>sle.ftpc</groupId>
-                        <artifactId>xmlbeans-2.5.0</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
