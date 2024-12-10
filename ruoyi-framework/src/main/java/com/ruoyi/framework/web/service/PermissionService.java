@@ -26,7 +26,7 @@ public class PermissionService
      */
     public boolean hasPermi(String permission)
     {
-        System.out.println("加个输出看controller上的@ss.hasPermi('system:user:list')是不是调用这个服务");
+        System.out.println("只有在@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)开启@ss.hasPermi('system:user:list')是不是调用这个服务");
         if (StringUtils.isEmpty(permission))
         {
             return false;

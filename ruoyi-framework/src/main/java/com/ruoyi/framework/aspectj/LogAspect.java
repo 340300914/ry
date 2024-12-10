@@ -54,6 +54,7 @@ public class LogAspect
     @Before(value = "@annotation(controllerLog)")
     public void boBefore(JoinPoint joinPoint, Log controllerLog)
     {
+        System.out.println("测试一下aspect是不是在inter之后");
         TIME_THREADLOCAL.set(System.currentTimeMillis());
     }
 

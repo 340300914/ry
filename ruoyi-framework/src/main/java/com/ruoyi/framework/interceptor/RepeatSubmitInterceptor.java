@@ -22,6 +22,7 @@ public abstract class RepeatSubmitInterceptor implements HandlerInterceptor
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
     {
+        System.out.println("这是RepeatSubmitInterceptor的preHandle");
         if (handler instanceof HandlerMethod)
         {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
