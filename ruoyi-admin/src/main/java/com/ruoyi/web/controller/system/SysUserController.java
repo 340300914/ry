@@ -57,13 +57,26 @@ public class SysUserController extends BaseController
 
     /**
      * 获取用户列表
+     * http://192.168.139.155/dev-api/system/user/list?pageNum=1&pageSize=10
+     * &userName=%E4%B8%8D%E5%91%8A%E8%AF%89%E4%BD%A0&phonenumber=98745654
+     *
+     * 入参没有RequstBody注解，那参数就是params是在url上的。
      */
     @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysUser user)
     {
+        //从requst请求上下文中获取url中的分页数据。
+        //作用范围：PageHelper.startPage 的作用范围是从调用该方法到下次遇到非查询操作或显式关闭分页为止。
+        // 因此，在同一个线程中，如果你不希望后续查询也受到影响，应该及时结束分页状态。
+        //在Spring Boot应用中使用PageHelper.startPage进行分页查询时，通常情况下不需要显式地结束分页操作，原因如下：
+        //1. 作用范围的自动管理
+        //PageHelper.startPage的作用范围是从调用该方法到遇到下一个非查询操作（如插入、更新或删除）为止。也就是说，在一次HTTP请求处理过程中，
+        // 如果你只执行了一次分页查询，那么这个分页配置会在查询完成后自动失效。因此，在大多数情况下，你不需要手动关闭分页。
         startPage();
+        //从服务层获取数据
         List<SysUser> list = userService.selectUserList(user);
+        //考虑一下为什么放在controller进行数据处理.
         return getDataTable(list);
     }
 
@@ -73,7 +86,7 @@ public class SysUserController extends BaseController
     public void export(HttpServletResponse response, SysUser user)
     {
         List<SysUser> list = userService.selectUserList(user);
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
         util.exportExcel(response, list, "用户数据");
     }
 
@@ -82,7 +95,7 @@ public class SysUserController extends BaseController
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
     {
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
         String operName = getUsername();
         String message = userService.importUser(userList, updateSupport, operName);
@@ -92,7 +105,7 @@ public class SysUserController extends BaseController
     @PostMapping("/importTemplate")
     public void importTemplate(HttpServletResponse response)
     {
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
         util.importTemplateExcel(response, "用户数据");
     }
 
@@ -104,8 +117,8 @@ public class SysUserController extends BaseController
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {
         userService.checkUserDataScope(userId);
-        AjaxResult ajax = AjaxResult.success();
         List<SysRole> roles = roleService.selectRoleAll();
+        AjaxResult ajax = AjaxResult.success();
         ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         ajax.put("posts", postService.selectPostAll());
         if (StringUtils.isNotNull(userId))
@@ -155,7 +168,9 @@ public class SysUserController extends BaseController
     {
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
+
         deptService.checkDeptDataScope(user.getDeptId());
+
         roleService.checkRoleDataScope(user.getRoleIds());
         if (!userService.checkUserNameUnique(user))
         {
@@ -186,6 +201,7 @@ public class SysUserController extends BaseController
             return error("当前用户不能删除");
         }
         return toAjax(userService.deleteUserByIds(userIds));
+
     }
 
     /**
@@ -231,6 +247,9 @@ public class SysUserController extends BaseController
         ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         return ajax;
     }
+
+
+
 
     /**
      * 用户授权角色

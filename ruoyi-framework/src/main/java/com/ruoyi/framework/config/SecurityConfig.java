@@ -119,6 +119,7 @@ public class SecurityConfig
                     // 除上面外的所有请求全部需要鉴权认证
                     .anyRequest().authenticated();
             })
+
             // 添加Logout filter
             .logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler))
             // 添加JWT filter

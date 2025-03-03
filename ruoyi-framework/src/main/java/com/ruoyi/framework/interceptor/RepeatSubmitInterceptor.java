@@ -10,6 +10,7 @@ import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.ServletUtils;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 防止重复提交拦截器
@@ -43,6 +44,18 @@ public abstract class RepeatSubmitInterceptor implements HandlerInterceptor
         {
             return true;
         }
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+        System.out.println("postHandle");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
+        System.out.println("afterCompletion");
     }
 
     /**

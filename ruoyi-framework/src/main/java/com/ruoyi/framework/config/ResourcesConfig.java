@@ -40,7 +40,7 @@ public class ResourcesConfig implements WebMvcConfigurer
     }
 
     /**
-     * 自定义拦截规则
+     * 自定义拦截规则，这里配置拦截器的顺序。
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry)

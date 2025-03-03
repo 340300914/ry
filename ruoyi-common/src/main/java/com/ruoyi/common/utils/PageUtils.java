@@ -30,6 +30,7 @@ public class PageUtils extends PageHelper
      */
     public static void clearPage()
     {
+        System.out.println("监控一下啥时候调用");
         PageHelper.clearPage();
     }
 }

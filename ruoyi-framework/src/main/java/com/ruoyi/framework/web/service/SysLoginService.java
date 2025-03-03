@@ -87,6 +87,7 @@ public class SysLoginService
             }
             else
             {
+
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
                 throw new ServiceException(e.getMessage());
             }
@@ -95,6 +96,7 @@ public class SysLoginService
         {
             AuthenticationContextHolder.clearContext();
         }
+
 
         //通过异步任务 把登录日志写到mysql 存到ry-logininfo表---hwb
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
@@ -162,6 +164,7 @@ public class SysLoginService
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
             throw new UserPasswordNotMatchException();
         }
+
         // IP黑名单校验
         String blackStr = configService.selectConfigByKey("sys.login.blackIPList");
         if (IpUtils.isMatchedIp(blackStr, IpUtils.getIpAddr()))
@@ -182,6 +185,8 @@ public class SysLoginService
     {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(userId);
+
+
         sysUser.setLoginIp(IpUtils.getIpAddr());
         sysUser.setLoginDate(DateUtils.getNowDate());
         userService.updateUserProfile(sysUser);

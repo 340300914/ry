@@ -28,6 +28,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter
     @Autowired
     private TokenService tokenService;
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException
@@ -53,4 +55,5 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter
         chain.doFilter(request, response);
         System.out.println("这是dofilter做完之后发出的消息");
     }
+
 }
